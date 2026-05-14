@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content OS™ — DeployMIMS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink: #0A0A0A;
+  --cream: #F7F3EC;
+  --rust: #BF4020;
+  --teal: #1B6E62;
+  --gold: #C49A22;
+  --sand: #D9CEBA;
+  --muted: #7A7268;
+  --white: #FDFCF9;
+  --card: #131313;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--rust);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(191,64,32,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.1s ease;
+}
+
+/* ── NAV ─────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 500;
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--rust);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cream); }
+
+.nav-cta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background: var(--rust);
+  color: var(--white);
+  border: none;
+  cursor: none;
+  transition: background 0.2s;
+}
+.nav-cta:hover { background: #9a3318; }
+
+/* ── HERO ─────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(191,64,32,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(27,110,98,0.06) 0%, transparent 50%);
+}
+
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--rust);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(52px, 8vw, 120px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.hero h1 em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: var(--rust);
+}
+
+.hero-sub {
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.hero-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.pill-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--muted);
+}
+
+.hero-counter {
+  position: absolute;
+  right: 48px;
+  bottom: 80px;
+  text-align: right;
+}
+
+.hero-counter .big-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+}
+
+.hero-counter .num-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── SECTION SHARED ──────────────────────────── */
+section {
+  padding: 100px 48px;
+  position: relative;
+}
+
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--rust);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-tag::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--rust);
+}
+
+.section-h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.section-lead {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 64px;
+}
+
+/* ── WHY SECTION ─────────────────────────────── */
+.why-section { background: var(--cream); color: var(--ink); }
+.why-section .section-tag { color: var(--rust); }
+.why-section .section-tag::before { background: var(--rust); }
+.why-section .section-lead { color: #5a5248; }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.why-card {
+  padding: 48px 40px;
+  background: var(--white);
+  border-top: 3px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.why-card:hover { border-color: var(--rust); }
+
+.why-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.06);
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.why-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.why-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5a5248;
+}
+
+/* ── CONTENT OS STRUCTURE ────────────────────── */
+.os-section { background: #0D0D0D; }
+
+.os-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 48px;
+  overflow-x: auto;
+}
+
+.os-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.os-tab.active, .os-tab:hover {
+  color: var(--cream);
+  border-bottom-color: var(--rust);
+}
+
+.os-panel { display: none; }
+.os-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.os-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 36px;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.os-card:hover {
+  border-color: rgba(191,64,32,0.3);
+  background: rgba(191,64,32,0.03);
+}
+
+.os-card-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--rust);
+  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+}
+
+.os-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.os-card-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.os-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.os-items li {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.os-items li::before {
+  content: '→';
+  color: var(--rust);
+  flex-shrink: 0;
+}
+
+/* ── FEED LAYOUT SECTION ─────────────────────── */
+.feed-section { background: var(--cream); color: var(--ink); }
+.feed-section .section-tag { color: var(--rust); }
+.feed-section .section-tag::before { background: var(--rust); }
+.feed-section .section-lead { color: #5a5248; }
+
+.feed-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 64px;
+}
+
+.feed-col-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.feed-grid-demo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.feed-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-align: center;
+  padding: 8px;
+  line-height: 1.3;
+}
+
+/* Catalogue style - chaotic */
+.catalogue .feed-cell:nth-child(1) { background: #FF6B6B; color: white; }
+.catalogue .feed-cell:nth-child(2) { background: #4ECDC4; color: white; }
+.catalogue .feed-cell:nth-child(3) { background: #FFE66D; color: #333; }
+.catalogue .feed-cell:nth-child(4) { background: #A8E6CF; color: #333; }
+.catalogue .feed-cell:nth-child(5) { background: #FF8B94; color: white; }
+.catalogue .feed-cell:nth-child(6) { background: #C3A6FF; color: white; }
+.catalogue .feed-cell:nth-child(7) { background: #B4F8C8; color: #333; }
+.catalogue .feed-cell:nth-child(8) { background: #FBE7C6; color: #333; }
+.catalogue .feed-cell:nth-child(9) { background: #8DEAFF; color: #333; }
+
+/* Library style - intentional */
+.library .feed-cell:nth-child(odd) { background: #0D0D0D; color: #F7F3EC; }
+.library .feed-cell:nth-child(even) { background: #F7F3EC; color: #0D0D0D; }
+.library .feed-cell:nth-child(2) { background: #BF4020; color: white; }
+.library .feed-cell:nth-child(8) { background: #1B6E62; color: white; }
+
+.feed-insight {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.insight-item {
+  border-top: 2px solid var(--rust);
+  padding-top: 24px;
+}
+
+.insight-stat {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--rust);
+  margin-bottom: 8px;
+}
+
+.insight-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── BRAND SIMULATOR ─────────────────────────── */
+.simulator-section { background: #0A0A0A; }
+
+.simulator-ui {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2px;
+  min-height: 700px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.sim-panel {
+  background: #111;
+  padding: 0;
+  overflow-y: auto;
+  max-height: 700px;
+}
+
+.sim-panel-section {
+  padding: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.sim-panel-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Color swatches */
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  cursor: none;
+  border: 2px solid transparent;
+  transition: transform 0.15s, border-color 0.15s;
+  position: relative;
+}
+
+.swatch:hover { transform: scale(1.15); z-index: 2; }
+.swatch.selected { border-color: white; transform: scale(1.1); }
+
+/* Font options */
+.font-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.font-option {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: none;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.font-option:hover, .font-option.selected {
+  background: rgba(191,64,32,0.1);
+  border-color: rgba(191,64,32,0.3);
+}
+
+.font-name {
+  font-size: 13px;
+  color: var(--cream);
+}
+
+.font-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+}
+
+/* Icon style */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.icon-btn {
+  aspect-ratio: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: none;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover, .icon-btn.selected {
+  background: rgba(191,64,32,0.15);
+  border-color: var(--rust);
+}
+
+/* Simulator preview */
+.sim-preview {
+  background: #0D0D0D;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim-preview-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sim-preview-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.sim-export-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  background: var(--rust);
+  color: white;
+  border: none;
+  cursor: none;
+}
+
+.sim-preview-body {
+  flex: 1;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Preview cards */
+.preview-card {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+.preview-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.preview-heading {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.preview-body-text {
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.65;
+}
+
+.preview-tag-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preview-tag {
+  font-size: 9px;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+  letter-spacing: 0.08em;
+}
+
+.preview-cta {
+  font-size: 11px;
+  padding: 10px 18px;
+  display: inline-block;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+  width: fit-content;
+}
+
+/* Mood board big preview */
+.mood-preview {
+  grid-column: span 2;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  min-height: 120px;
+}
+
+.mood-swatch {
+  min-height: 80px;
+  display: flex;
+  align-items: flex-end;
+  padding: 8px;
+  transition: all 0.3s;
+}
+
+.mood-swatch-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+/* Feed preview */
+.feed-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.feed-preview-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  text-align: center;
+  padding: 6px;
+  line-height: 1.3;
+  font-family: 'DM Mono', monospace;
+  transition: all 0.3s;
+}
+
+/* Tone selector */
+.tone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.tone-btn {
+  padding: 10px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.tone-btn.selected, .tone-btn:hover {
+  background: rgba(191,64,32,0.1);
+  border-color: rgba(191,64,32,0.4);
+  color: var(--cream);
+}
+
+/* ── AEO/SEO SECTION ─────────────────────────── */
+.seo-section { background: var(--cream); color: var(--ink); }
+.seo-section .section-tag { color: var(--rust); }
+.seo-section .section-tag::before { background: var(--rust); }
+
+.seo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.seo-col-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--rust);
+}
+
+.seo-item {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  gap: 20px;
+}
+
+.seo-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 32px;
+}
+
+.seo-item-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.seo-item-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5a5248;
+}
+
+/* ── PRICING ─────────────────────────────────── */
+.pricing-section { background: var(--ink); }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.price-card {
+  padding: 48px 40px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.price-card:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(191,64,32,0.3);
+}
+
+.price-card.featured {
+  background: var(--rust);
+  border-color: var(--rust);
+}
+
+.price-badge {
+  position: absolute;
+  top: -1px; right: 24px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+}
+
+.price-tier {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.price-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.price-amount {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.price-period {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+.price-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.price-features li {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  display: flex;
+  gap: 12px;
+  opacity: 0.8;
+}
+
+.price-features li::before { content: '✓'; color: var(--gold); }
+.price-card.featured .price-features li::before { color: white; opacity: 0.7; }
+
+.price-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: var(--cream);
+  cursor: none;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+
+.price-card.featured .price-btn {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+}
+
+.price-btn:hover { background: var(--rust); border-color: var(--rust); }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  padding: 60px 48px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--rust);
+}
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── ANIMATIONS ──────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.35s; }
+.delay-4 { animation-delay: 0.5s; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Content OS™</div>
+  <ul class="nav-links">
+    <li><a href="#why">Why It Matters</a></li>
+    <li><a href="#os">The OS</a></li>
+    <li><a href="#feed">Feed Strategy</a></li>
+    <li><a href="#simulator">Brand Simulator</a></li>
+    <li><a href="#seo">AEO + SEO</a></li>
+  </ul>
+  <button class="nav-cta">Get Content OS</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-tag animate-in">DeployMIMS · Systems With Julia · 2026</div>
+
+  <h1 class="animate-in delay-1">
+    From<br>
+    <em>Catalogue</em><br>
+    to Library.
+  </h1>
+
+  <p class="hero-sub animate-in delay-2">
+    The Content OS™ is a complete operating system for how any business — anywhere in the world — thinks about, creates, and deploys content that builds trust before it asks for the sale.
+  </p>
+
+  <div class="hero-pills animate-in delay-3">
+    <span class="pill-tag">Instagram & TikTok Strategy</span>
+    <span class="pill-tag">Brand Architecture</span>
+    <span class="pill-tag">AEO + SEO Structure</span>
+    <span class="pill-tag">Mood Board Simulator</span>
+    <span class="pill-tag">Feed Layout System</span>
+    <span class="pill-tag">Content Calendar</span>
+  </div>
+
+  <div class="hero-counter animate-in delay-4">
+    <div class="big-num">108</div>
+    <div class="num-label">Design frameworks included</div>
+  </div>
+</section>
+
+<!-- WHY IT MATTERS -->
+<section class="why-section" id="why">
+  <div class="section-tag">Why It Matters</div>
+  <h2 class="section-h2">Most businesses post.<br>Few businesses <em style="font-family:'Playfair Display',serif;font-style:italic">build.</em></h2>
+  <p class="section-lead">The difference between a brand people follow and a brand people scroll past isn't budget, followers, or luck. It's system. Here's what no one tells you.</p>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-num">01</div>
+      <div class="why-title">Your feed is your first impression — always.</div>
+      <div class="why-body">Before a potential client reads your bio, clicks your link, or sends a DM, they scan your grid. In 1.7 seconds, they decide whether you're worth their time. A chaotic feed says "unprepared." A systematic feed says "trustworthy." That decision happens before a single word is read.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">02</div>
+      <div class="why-title">A catalogue sells once. A library compounds forever.</div>
+      <div class="why-body">A catalogue is a collection of things for sale. A library is a collection of things of value. When you post purely promotional content, people follow you until they've bought — then they leave. When you build a library of knowledge, people follow you, refer you, and buy from you repeatedly. This is the compounding content model.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">03</div>
+      <div class="why-title">The algorithm rewards consistency. The audience rewards identity.</div>
+      <div class="why-body">Posting daily will get you reach. Posting with a recognisable visual identity, consistent voice, and systematic content pillars will get you loyalty. Loyal audiences buy. Reached audiences scroll. The Content OS builds both — but prioritises loyalty because loyalty scales.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">04</div>
+      <div class="why-title">AEO is the new SEO — and most businesses are invisible.</div>
+      <div class="why-body">Answer Engine Optimisation means structuring your content so that AI tools — ChatGPT, Claude, Perplexity — can find and cite you when people ask questions in your niche. If you're not structured for AEO, you don't exist in the fastest growing search channel in history. The Content OS bakes this in from day one.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">05</div>
+      <div class="why-title">Brand is not a logo. Brand is a system of recognition.</div>
+      <div class="why-body">Your colours, your typefaces, your icon style, your content patterns, your voice, your rhythm — all of these together create recognition. Recognition creates trust. Trust creates sales. The Brand Simulator inside this OS lets you design, test, and commit to the system that makes you unmistakable across every platform you show up on.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">06</div>
+      <div class="why-title">SMBs worldwide are underserved by content systems built for enterprises.</div>
+      <div class="why-body">Most content strategy tools were designed for teams of 10+, budgets of $50K+, and markets in the global north. The Content OS was built for a founder running solo or a team of three, in Lagos or London, Abuja or Atlanta — who needs a system that works with limited time, limited budget, and unlimited ambition.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THE OS STRUCTURE -->
+<section class="os-section" id="os">
+  <div class="section-tag">The Content OS Structure</div>
+  <h2 class="section-h2">Seven layers.<br>One operating system.</h2>
+  <p class="section-lead">The Content OS is not a content calendar. It's an architecture. Each layer builds on the one below it — remove one and the whole system weakens.</p>
+
+  <div class="os-tabs">
+    <button class="os-tab active" onclick="switchTab(this,'layer1')">01 · Identity</button>
+    <button class="os-tab" onclick="switchTab(this,'layer2')">02 · Pillars</button>
+    <button class="os-tab" onclick="switchTab(this,'layer3')">03 · Feed Layout</button>
+    <button class="os-tab" onclick="switchTab(this,'layer4')">04 · Content Bank</button>
+    <button class="os-tab" onclick="switchTab(this,'layer5')">05 · Distribution</button>
+    <button class="os-tab" onclick="switchTab(this,'layer6')">06 · AEO + SEO</button>
+    <button class="os-tab" onclick="switchTab(this,'layer7')">07 · Measurement</button>
+  </div>
+
+  <div id="layer1" class="os-panel active">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 01 · FOUNDATION</div>
+      <div class="os-card-title">Brand Identity System</div>
+      <div class="os-card-body">Before any content is created, the identity must be locked. Colours, typefaces, icon style, voice, and visual rhythm. This is not decoration — it's the system that makes every post instantly recognisable as yours, regardless of platform or format.</div>
+      <ul class="os-items">
+        <li>Primary + secondary + accent colour palette (locked)</li>
+        <li>Display font + body font + mono font (3-font system)</li>
+        <li>Icon family selection (outline / filled / geometric)</li>
+        <li>Brand voice: 3 adjectives that govern every caption</li>
+        <li>Visual rhythm: dark / light / accent pattern for grid</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 01 · TOOL</div>
+      <div class="os-card-title">Brand Mood Board Simulator</div>
+      <div class="os-card-body">The interactive simulator below lets you test colour palettes, typography combinations, icon styles, and brand tones in real time. You'll see how your brand looks across a post card, a feed grid, and a mood board — before committing a single design to Canva.</div>
+      <ul class="os-items">
+        <li>54 curated colours across 9 mood families</li>
+        <li>12 typeface pairings (display + body)</li>
+        <li>8 icon style families with 40+ icons</li>
+        <li>6 brand tone presets (Bold, Calm, Luxury, Playful, Clinical, Earth)</li>
+        <li>Live feed grid preview with your brand applied</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer2" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 02 · STRATEGY</div>
+      <div class="os-card-title">The 5 Content Pillars</div>
+      <div class="os-card-body">Every post belongs to one of five content families. This prevents random posting and ensures that every piece of content serves a strategic purpose — building authority, trust, or conversion intent.</div>
+      <ul class="os-items">
+        <li>Intelligence: Data + insights that make your audience smarter</li>
+        <li>Education: How-tos + tutorials + step-by-step guides</li>
+        <li>Story: Your journey, client wins, behind-the-scenes</li>
+        <li>Resources: Free tools, templates, checklists, frameworks</li>
+        <li>Conversion: Offers, proof, CTAs — used sparingly (1 in 5 posts)</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 02 · RATIO</div>
+      <div class="os-card-title">The 4-1 Content Rule</div>
+      <div class="os-card-body">For every 4 pieces of pure value content, you earn the right to 1 conversion post. This ratio builds the trust bank that makes conversion posts actually convert. Most businesses do it backwards — and wonder why their ads don't work.</div>
+      <ul class="os-items">
+        <li>Post 1: Intelligence or Education</li>
+        <li>Post 2: Story or Behind-the-scenes</li>
+        <li>Post 3: Resource or Free tool</li>
+        <li>Post 4: Intelligence or Education</li>
+        <li>Post 5: Conversion (offer / proof / CTA)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer3" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 03 · VISUAL</div>
+      <div class="os-card-title">The Feed Layout System</div>
+      <div class="os-card-body">Your Instagram and TikTok feeds are not galleries — they are designed spaces. The pattern of light/dark, text-heavy/visual, quote/diagram creates a visual rhythm that tells the story of your brand before a single post is read.</div>
+      <ul class="os-items">
+        <li>The 3-column alternating rhythm (dark / light / accent)</li>
+        <li>The anchor post system (every 3rd row has one bold statement)</li>
+        <li>The middle column strategy (most viewed — always your strongest)</li>
+        <li>Colour-blocking for brand recognition at scroll speed</li>
+        <li>The pinned row: first 3 posts must convert a cold viewer</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 03 · FORMATS</div>
+      <div class="os-card-title">Content Format Library</div>
+      <div class="os-card-body">Each content type has a designated format. Using the right format for the right content type increases saves, shares, and reach — which directly impacts how the algorithm distributes your content.</div>
+      <ul class="os-items">
+        <li>Single image: quotes, stats, principles (highest save rate)</li>
+        <li>Carousel: tutorials, frameworks, step-by-step (highest reach)</li>
+        <li>Reel: faceless tips, hacks, transformations (highest new audience)</li>
+        <li>Story: polls, Q&A, behind-scenes (highest trust building)</li>
+        <li>Link post: articles, tools, resources (LinkedIn + Substack)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer4" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 04 · CREATION</div>
+      <div class="os-card-title">The Content Bank</div>
+      <div class="os-card-body">The content bank is a pre-built library of 100+ ideas, hooks, and frameworks that you pull from daily. Never stare at a blank screen. Never post randomly. The bank is refilled monthly with new intelligence, trending hooks, and seasonal content angles.</div>
+      <ul class="os-items">
+        <li>30 scroll-stopping hook formulas</li>
+        <li>12 Substack article ideas per month</li>
+        <li>108 system design infographic frameworks</li>
+        <li>The 5 × 5 matrix: 5 pillars × 5 formats = 25 post templates</li>
+        <li>Seasonal content calendar overlays per industry</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 04 · PROCESS</div>
+      <div class="os-card-title">The Batch Creation System</div>
+      <div class="os-card-body">Content is created in weekly batches, not daily scrambles. One 3-hour session per week produces 7 days of content across all platforms. This is the creative efficiency system that separates founders who burn out from founders who compound.</div>
+      <ul class="os-items">
+        <li>Tuesday: Batch-record 5 TikTok/Reels in one session</li>
+        <li>Wednesday: Design 7 static posts from bank in Canva</li>
+        <li>Thursday: Write 1 Substack + 2 LinkedIn posts</li>
+        <li>Friday: Schedule everything for next 7 days</li>
+        <li>Total time: 3–4 hours. Content: 7 days across all platforms.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer5" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 05 · REACH</div>
+      <div class="os-card-title">The Distribution Map</div>
+      <div class="os-card-body">Every piece of content is distributed across multiple platforms through the repurpose chain. One core idea becomes 6–8 pieces of content across Instagram, TikTok, LinkedIn, YouTube Shorts, Pinterest, Substack, and Email — without creating anything new.</div>
+      <ul class="os-items">
+        <li>Core idea → Substack long-form (the source of truth)</li>
+        <li>Substack → LinkedIn post (condensed insight)</li>
+        <li>LinkedIn → Instagram quote card (visual distillation)</li>
+        <li>TikTok reel → Instagram reel → YouTube Shorts → Pinterest</li>
+        <li>All → Email newsletter (weekly digest format)</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 05 · TIMING</div>
+      <div class="os-card-title">Platform Posting Schedule</div>
+      <div class="os-card-body">Platform algorithms reward consistency and timing. Each platform has optimal posting windows that shift by audience and geography. The Content OS includes research-backed timing schedules for Nigerian, UK, and US audiences — with seasonal adjustments.</div>
+      <ul class="os-items">
+        <li>Instagram: 8am, 12pm, 7pm WAT (peak engagement windows)</li>
+        <li>LinkedIn: Monday + Thursday, 12 noon (B2B decision-maker hours)</li>
+        <li>TikTok: 6am, 9am, 7pm (algorithm distribution windows)</li>
+        <li>Email: Tuesday or Thursday, 9am (highest open rates globally)</li>
+        <li>Substack: Sunday evening (reading + reflection time)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer6" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 06 · DISCOVERY</div>
+      <div class="os-card-title">SEO Content Structure</div>
+      <div class="os-card-body">Search Engine Optimisation for content means structuring every post, caption, and article so that Google can find, index, and rank it. Most social content is invisible to search. Structured content compounds — it gets discovered long after it was posted.</div>
+      <ul class="os-items">
+        <li>Caption structure: Hook → Value → Keyword → CTA</li>
+        <li>Alt text on every image (descriptive, keyword-rich)</li>
+        <li>Substack as the SEO anchor — long-form, keyword-dense</li>
+        <li>Hashtag architecture: 3 broad + 4 niche + 3 branded</li>
+        <li>Title formula: [Number] + [Keyword] + [Outcome] for all articles</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 06 · AI SEARCH</div>
+      <div class="os-card-title">AEO: Answer Engine Optimisation</div>
+      <div class="os-card-body">AEO structures your content so that AI tools — ChatGPT, Claude, Perplexity, Google AI Overviews — can find and cite you when users ask questions in your niche. This is the fastest growing discovery channel and the most underserved by SMBs worldwide.</div>
+      <ul class="os-items">
+        <li>Write in question + answer format (mirrors how AI searches)</li>
+        <li>Every article answers one specific question completely</li>
+        <li>Use structured data markup on your website content</li>
+        <li>Build a FAQ section for every service page</li>
+        <li>Publish consistently — AI tools favour recency + authority signals</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="layer7" class="os-panel">
+    <div class="os-card">
+      <div class="os-card-num">LAYER 07 · INTELLIGENCE</div>
+      <div class="os-card-title">The Weekly Metrics Review</div>
+      <div class="os-card-body">What gets measured gets managed. The Content OS includes a weekly review template that takes 30 minutes and tells you exactly what's working, what to stop, and what to double down on — without getting lost in vanity metrics.</div>
+      <ul class="os-items">
+        <li>Reach: How many new people saw your content this week?</li>
+        <li>Save rate: What % of viewers saved the post? (best quality signal)</li>
+        <li>Profile visits: How many clicked to know more?</li>
+        <li>Link clicks: How many went to your site or offer?</li>
+        <li>Replies/DMs: How many started a conversation?</li>
+      </ul>
+    </div>
+    <div class="os-card">
+      <div class="os-card-num">LAYER 07 · NORTH STAR</div>
+      <div class="os-card-title">The One Metric That Matters</div>
+      <div class="os-card-body">For SMBs, the content north star metric is not followers, reach, or likes. It's inbound conversations started per week. One genuine DM or email from a potential client is worth 10,000 impressions from someone who will never buy. Optimise for conversations. Everything else is a leading indicator.</div>
+      <ul class="os-items">
+        <li>Track conversations started per week (not followers)</li>
+        <li>Track conversion from conversation to booked call</li>
+        <li>Track booked calls to proposal sent</li>
+        <li>Track proposals to clients signed</li>
+        <li>Reverse-engineer from client back to content type</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FEED LAYOUT -->
+<section class="feed-section" id="feed">
+  <div class="section-tag">Feed Layout Strategy</div>
+  <h2 class="section-h2">Catalogue vs Library.<br>The visual truth.</h2>
+  <p class="section-lead">Here's what the difference actually looks like — side by side. One is a random collection. One is a designed experience. Both may post daily. Only one builds a brand.</p>
+
+  <div class="feed-compare">
+    <div>
+      <div class="feed-col-label" style="background:#FF6B6B;color:white">❌ The Catalogue Feed</div>
+      <div class="feed-grid-demo catalogue">
+        <div class="feed-cell">SALE TODAY 50% OFF</div>
+        <div class="feed-cell">Happy Monday 😊</div>
+        <div class="feed-cell">BUY NOW limited offer!!</div>
+        <div class="feed-cell">Follow for more tips</div>
+        <div class="feed-cell">Repost if you agree</div>
+        <div class="feed-cell">DM for pricing</div>
+        <div class="feed-cell">New product drop!</div>
+        <div class="feed-cell">Tag a friend 👇</div>
+        <div class="feed-cell">FLASH SALE ends soon</div>
+      </div>
+    </div>
+    <div>
+      <div class="feed-col-label" style="background:#0D0D0D;color:#F7F3EC">✓ The Library Feed</div>
+      <div class="feed-grid-demo library">
+        <div class="feed-cell" style="font-family:'DM Mono',monospace;font-size:8px">Why your follow-up is broken</div>
+        <div class="feed-cell" style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px">67%</div>
+        <div class="feed-cell" style="font-family:'DM Mono',monospace;font-size:8px">How to build a Notion CRM</div>
+        <div class="feed-cell" style="font-family:'Syne',sans-serif;font-weight:700;font-size:10px">Systems > Hustle</div>
+        <div class="feed-cell" style="font-family:'DM Mono',monospace;font-size:8px">The 5-layer business stack</div>
+        <div class="feed-cell" style="font-family:'Syne',sans-serif;font-weight:700;font-size:9px">Free audit →</div>
+        <div class="feed-cell" style="font-family:'DM Mono',monospace;font-size:8px">Revenue leak calculator</div>
+        <div class="feed-cell" style="font-family:'Syne',sans-serif;font-weight:700;font-size:10px">Busy ≠ Profitable</div>
+        <div class="feed-cell" style="font-family:'DM Mono',monospace;font-size:8px">30 days to systemised</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed-insight">
+    <div class="insight-item">
+      <div class="insight-stat">3.2×</div>
+      <div class="insight-label">higher save rate for educational content vs promotional posts. Saves tell the algorithm your content has lasting value.</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-stat">4.7×</div>
+      <div class="insight-label">more profile visits from content that teaches something specific vs content that sells something directly.</div>
+    </div>
+    <div class="insight-item">
+      <div class="insight-stat">11×</div>
+      <div class="insight-label">higher DM conversion rate from warm audiences built through consistent educational content vs cold promotional audiences.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND SIMULATOR -->
+<section class="simulator-section" id="simulator">
+  <div class="section-tag">Brand Mood Board Simulator</div>
+  <h2 class="section-h2">Build your brand.<br>See it live.</h2>
+  <p class="section-lead">Select colours, typefaces, icon styles, and brand tone. Watch your brand come to life across a post card, a feed grid, and a mood board — in real time.</p>
+
+  <div class="simulator-ui">
+    <!-- Left Panel -->
+    <div class="sim-panel">
+
+      <!-- Colours -->
+      <div class="sim-panel-section">
+        <div class="sim-panel-label">Primary Colour · 54 options</div>
+        <div class="color-grid" id="colorGrid"></div>
+      </div>
+
+      <!-- Accent -->
+      <div class="sim-panel-section">
+        <div class="sim-panel-label">Accent Colour</div>
+        <div class="color-grid" id="accentGrid"></div>
+      </div>
+
+      <!-- Fonts -->
+      <div class="sim-panel-section">
+        <div class="sim-panel-label">Typeface Pairing</div>
+        <div class="font-list" id="fontList"></div>
+      </div>
+
+      <!-- Icons -->
+      <div class="sim-panel-section">
+        <div class="sim-panel-label">Icon Style · 40+ icons</div>
+        <div class="icon-grid" id="iconGrid"></div>
+      </div>
+
+      <!-- Tone -->
+      <div class="sim-panel-section">
+        <div class="sim-panel-label">Brand Tone</div>
+        <div class="tone-grid" id="toneGrid"></div>
+      </div>
+
+    </div>
+
+    <!-- Right Preview -->
+    <div class="sim-preview" id="simPreview">
+      <div class="sim-preview-header">
+        <span class="sim-preview-label">Live Preview</span>
+        <button class="sim-export-btn" onclick="exportMoodboard()">Export Palette →</button>
+      </div>
+      <div class="sim-preview-body" id="previewBody">
+
+        <!-- Post Card -->
+        <div class="preview-card" id="previewCard1" style="background:#0D0D0D;color:#F7F3EC">
+          <div class="preview-logo">DEPLOYMIMS</div>
+          <div class="preview-heading" id="ph1">Systems build companies. Hustle just keeps them running.</div>
+          <div class="preview-body-text" id="pb1">The difference between a growing business and a stuck one isn't talent — it's the operational infrastructure behind the talent.</div>
+          <div class="preview-tag-row">
+            <span class="preview-tag">#Systems</span>
+            <span class="preview-tag">#SMB</span>
+            <span class="preview-tag">#Operations</span>
+          </div>
+          <div class="preview-cta" id="pcta1" style="background:#BF4020;color:white">Get your free score →</div>
+        </div>
+
+        <!-- Post Card 2 -->
+        <div class="preview-card" id="previewCard2" style="background:#F7F3EC;color:#0D0D0D">
+          <div class="preview-logo" style="opacity:0.4">DEPLOYMIMS</div>
+          <div style="font-size:clamp(28px,3vw,48px);font-weight:800;line-height:1;margin-bottom:12px" id="ph2">67%</div>
+          <div class="preview-heading" id="ph2b">of businesses fail because of operations — not ideas.</div>
+          <div class="preview-body-text" id="pb2">SMEDAN, 2024 · What's your business health score today?</div>
+          <div class="preview-cta" id="pcta2" style="border:1.5px solid #0D0D0D;color:#0D0D0D;padding:10px 18px;font-size:11px;font-weight:600">Comment SCORE ↓</div>
+        </div>
+
+        <!-- Mood Board Strip -->
+        <div class="mood-preview" id="moodPreview">
+          <div class="mood-swatch" id="ms1" style="background:#0D0D0D"><span class="mood-swatch-label" style="color:#F7F3EC">Primary</span></div>
+          <div class="mood-swatch" id="ms2" style="background:#BF4020"><span class="mood-swatch-label" style="color:white">Accent</span></div>
+          <div class="mood-swatch" id="ms3" style="background:#F7F3EC"><span class="mood-swatch-label" style="color:#0D0D0D">Light</span></div>
+          <div class="mood-swatch" id="ms4" style="background:#D9CEBA"><span class="mood-swatch-label" style="color:#0D0D0D">Sand</span></div>
+          <div class="mood-swatch" id="ms5" style="background:#7A7268"><span class="mood-swatch-label" style="color:white">Muted</span></div>
+        </div>
+
+        <!-- Feed Grid -->
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px">Feed Grid Preview</div>
+          <div class="feed-preview" id="feedPreview">
+            <div class="feed-preview-cell" style="background:#0D0D0D;color:#F7F3EC">Intelligence post</div>
+            <div class="feed-preview-cell" style="background:#BF4020;color:white">Stat · 67%</div>
+            <div class="feed-preview-cell" style="background:#F7F3EC;color:#0D0D0D">How-to tutorial</div>
+            <div class="feed-preview-cell" style="background:#F7F3EC;color:#0D0D0D">Principle quote</div>
+            <div class="feed-preview-cell" style="background:#0D0D0D;color:#F7F3EC">Framework flow</div>
+            <div class="feed-preview-cell" style="background:#D9CEBA;color:#0D0D0D">Resource free</div>
+            <div class="feed-preview-cell" style="background:#BF4020;color:white">Story post</div>
+            <div class="feed-preview-cell" style="background:#F7F3EC;color:#0D0D0D">Education post</div>
+            <div class="feed-preview-cell" style="background:#0D0D0D;color:#F7F3EC">Conversion CTA</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AEO + SEO -->
+<section class="seo-section" id="seo">
+  <div class="section-tag">AEO + SEO Structure</div>
+  <h2 class="section-h2">Content that gets found.<br>By humans <em style="font-family:'Playfair Display',serif;font-style:italic">and</em> machines.</h2>
+  <p class="section-lead">Every piece of content in the OS is structured for both traditional search engines and the new wave of AI answer engines. Here's exactly how each element is built for discovery.</p>
+
+  <div class="seo-grid">
+    <div>
+      <div class="seo-col-title">SEO Structure</div>
+      <div class="seo-item">
+        <div class="seo-icon">🔍</div>
+        <div>
+          <div class="seo-item-title">Keyword-led caption structure</div>
+          <div class="seo-item-body">Every caption follows: Hook → Core insight → Keyword phrase → CTA. The keyword phrase is placed in the first 125 characters — what Instagram shows before the "more" cut-off — for maximum search visibility.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">🖼</div>
+        <div>
+          <div class="seo-item-title">Alt text on every image</div>
+          <div class="seo-item-body">Descriptive, keyword-rich alt text on every post image. Most brands skip this entirely. It's free SEO and accessibility built into the workflow.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">#️⃣</div>
+        <div>
+          <div class="seo-item-title">Hashtag architecture (3-4-3)</div>
+          <div class="seo-item-body">3 broad reach hashtags + 4 niche authority hashtags + 3 branded hashtags per post. This architecture balances discovery and community building without triggering spam filters.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">📝</div>
+        <div>
+          <div class="seo-item-title">Substack as SEO anchor</div>
+          <div class="seo-item-body">Long-form Substack articles are the SEO foundation. Each article targets one specific search query, answers it completely, and links back to your core offer. Google indexes Substack. Most creators don't know this.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">🔗</div>
+        <div>
+          <div class="seo-item-title">Internal linking structure</div>
+          <div class="seo-item-body">Each piece of content links to one next step: article to landing page, post to link-in-bio, reel to Substack. The content OS maps this linking architecture so no piece of content is a dead end.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="seo-col-title">AEO Structure</div>
+      <div class="seo-item">
+        <div class="seo-icon">🤖</div>
+        <div>
+          <div class="seo-item-title">Question + answer format</div>
+          <div class="seo-item-body">Every article and post is structured around one specific question — the way a human would ask it to an AI. "How do Nigerian SMEs build a CRM?" is AEO-optimised. "CRM tips for businesses" is not.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">📋</div>
+        <div>
+          <div class="seo-item-title">Structured data markup</div>
+          <div class="seo-item-body">FAQ schema, HowTo schema, and Article schema on every website page. This is how Google AI Overviews and ChatGPT decide which sources to cite. Without it, you're invisible to AI search.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">📊</div>
+        <div>
+          <div class="seo-item-title">Definitive answer architecture</div>
+          <div class="seo-item-body">AI tools favour content that gives complete, authoritative answers. Every article follows: Define → Explain → Example → Action steps → Summary. This pattern signals expertise to both human and machine readers.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">📅</div>
+        <div>
+          <div class="seo-item-title">Recency signals</div>
+          <div class="seo-item-body">AI answer engines heavily favour recently published content. Publishing 3× per week on Substack — even short posts — keeps your content in the "recent and relevant" pool that AI tools pull from.</div>
+        </div>
+      </div>
+      <div class="seo-item">
+        <div class="seo-icon">🌐</div>
+        <div>
+          <div class="seo-item-title">Cross-platform citation building</div>
+          <div class="seo-item-body">When the same insight appears on LinkedIn, Substack, your website, and is referenced by others — AI tools begin to treat you as an authority source. The Content OS repurpose chain is AEO citation-building by design.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-tag">Get the Content OS™</div>
+  <h2 class="section-h2">Three ways in.<br>One system out.</h2>
+  <p class="section-lead">The Content OS is available as a self-serve toolkit, a guided implementation, or a fully deployed solution with ongoing support.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Tier 01</div>
+      <div class="price-name">Self-Serve OS</div>
+      <div>
+        <div class="price-amount">₦35K</div>
+        <div class="price-period">One-time · Instant access</div>
+      </div>
+      <ul class="price-features">
+        <li>Full Content OS document (PDF + Notion)</li>
+        <li>Brand Mood Board Simulator (this tool)</li>
+        <li>108 system design infographic templates</li>
+        <li>Content bank with 30 hooks + 12 articles</li>
+        <li>AEO + SEO structure guide</li>
+        <li>Feed layout strategy + examples</li>
+      </ul>
+      <button class="price-btn">Get Self-Serve →</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">Most Popular</div>
+      <div class="price-tier" style="color:rgba(255,255,255,0.6)">Tier 02</div>
+      <div class="price-name">Guided Setup</div>
+      <div>
+        <div class="price-amount">₦150K</div>
+        <div class="price-period">Includes 7-day implementation</div>
+      </div>
+      <ul class="price-features">
+        <li>Everything in Self-Serve</li>
+        <li>Brand identity locked in 48 hours</li>
+        <li>Custom feed layout designed for your brand</li>
+        <li>First 9 posts created and scheduled</li>
+        <li>Content pillars defined for your industry</li>
+        <li>1 × 60-minute strategy call with Julia</li>
+      </ul>
+      <button class="price-btn">Get Guided Setup →</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Tier 03</div>
+      <div class="price-name">Full Deploy</div>
+      <div>
+        <div class="price-amount">₦450K</div>
+        <div class="price-period">30-day implementation + retainer</div>
+      </div>
+      <ul class="price-features">
+        <li>Everything in Guided Setup</li>
+        <li>30-day content creation (all platforms)</li>
+        <li>AEO + SEO setup on your website</li>
+        <li>Substack launch + first 4 articles</li>
+        <li>Monthly content strategy retainer</li>
+        <li>Weekly metrics review + optimisation</li>
+      </ul>
+      <button class="price-btn">Get Full Deploy →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DeployMIMS</div>
+  <div class="footer-copy">Content OS™ · Systems With Julia · deploymims.com · 2026</div>
+</footer>
+
+<script>
+// ── CURSOR ──────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 4 + 'px';
+  cursor.style.top = my - 4 + 'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) *.12;
+  ring.style.left = rx - 16 + 'px';
+  ring.style.top = ry - 16 + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// ── TAB SWITCHER ────────────────────────────────
+function switchTab(btn, panelId) {
+  document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ── BRAND SIMULATOR DATA ────────────────────────
+
+const colours = [
+  // Darks & Neutrals
+  '#0A0A0A','#1A1A1A','#2A2A2A','#3D3D3D','#555555','#777777',
+  // Creams & Sands
+  '#FDFCF9','#F7F3EC','#EDE8DF','#D9CEBA','#C4B89A','#A89880',
+  // Rusts & Reds
+  '#BF4020','#A33418','#8C2810','#D4614A','#E87A60','#F0A090',
+  // Teals & Greens
+  '#1B6E62','#155A50','#0F453E','#2A8A7A','#3AADA0','#5ECEC2',
+  // Golds & Yellows
+  '#C49A22','#A8801A','#8C6612','#D4AE3A','#E8C860','#F4DE90',
+  // Blues & Slates
+  '#1E3A5F','#2A4A72','#1A5276','#2E86C1','#5DADE2','#85C1E9',
+  // Purples
+  '#4A235A','#6C3483','#8E44AD','#A569BD','#C39BD3','#D7BDE2',
+  // Pinks & Magentas
+  '#922B21','#C0392B','#E74C3C','#F1948A','#FADBD8','#FDECEA',
+  // Earthy & Warm
+  '#4E342E','#6D4C41','#8D6E63','#A1887F','#BCAAA4','#D7CCC8',
+];
+
+const accentColours = [
+  '#BF4020','#1B6E62','#C49A22','#2E86C1','#8E44AD','#E74C3C',
+  '#F39C12','#27AE60','#3498DB','#9B59B6','#E67E22','#1ABC9C',
+  '#F1C40F','#E91E63','#00BCD4','#FF5722','#607D8B','#795548',
+];
+
+const fonts = [
+  { display: 'Syne', body: 'DM Sans', label: 'Syne + DM Sans', mood: 'Bold · Modern' },
+  { display: 'Playfair Display', body: 'DM Sans', label: 'Playfair + DM Sans', mood: 'Luxury · Editorial' },
+  { display: 'DM Mono', body: 'DM Sans', label: 'DM Mono + DM Sans', mood: 'Technical · Systems' },
+  { display: 'Syne', body: 'DM Mono', label: 'Syne + DM Mono', mood: 'Architect · Precise' },
+  { display: 'Playfair Display', body: 'Playfair Display', label: 'Playfair + Playfair', mood: 'Classic · Refined' },
+  { display: 'DM Mono', body: 'DM Mono', label: 'Mono + Mono', mood: 'Code · Minimal' },
+];
+
+const icons = [
+  '◈','◉','◎','▣','▤','▥','◐','◑','◒','◓',
+  '⬡','⬢','⬣','△','▽','◇','◆','■','□','●',
+  '→','←','↑','↓','↗','↙','⟶','⇒','⇨','➜',
+  '✦','✧','★','☆','✱','✲','✳','❋','❊','✿',
+];
+
+const tones = [
+  { name: 'Bold', sub: 'Strong + direct' },
+  { name: 'Calm', sub: 'Soft + reassuring' },
+  { name: 'Luxury', sub: 'Refined + exclusive' },
+  { name: 'Playful', sub: 'Fun + energetic' },
+  { name: 'Clinical', sub: 'Precise + trustworthy' },
+  { name: 'Earth', sub: 'Warm + grounded' },
+];
+
+// State
+let state = {
+  primary: '#0A0A0A',
+  accent: '#BF4020',
+  fontIdx: 0,
+  tone: 'Bold',
+  icons: [],
+};
+
+// Build colour grid
+function buildColorGrid(containerId, cols, selectedKey) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  cols.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch' + (state[selectedKey] === c ? ' selected' : '');
+    sw.style.background = c;
+    sw.title = c;
+    sw.onclick = () => {
+      state[selectedKey] = c;
+      document.querySelectorAll(`#${containerId} .swatch`).forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      updatePreview();
+    };
+    el.appendChild(sw);
+  });
+}
+
+// Build font list
+function buildFontList() {
+  const el = document.getElementById('fontList');
+  el.innerHTML = '';
+  fonts.forEach((f, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'font-option' + (state.fontIdx === i ? ' selected' : '');
+    btn.innerHTML = `<span class="font-name" style="font-family:'${f.display}',serif">${f.label}</span><span class="font-meta">${f.mood}</span>`;
+    btn.onclick = () => {
+      state.fontIdx = i;
+      document.querySelectorAll('.font-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updatePreview();
+    };
+    el.appendChild(btn);
+  });
+}
+
+// Build icon grid
+function buildIconGrid() {
+  const el = document.getElementById('iconGrid');
+  el.innerHTML = '';
+  icons.forEach(ic => {
+    const btn = document.createElement('div');
+    btn.className = 'icon-btn' + (state.icons.includes(ic) ? ' selected' : '');
+    btn.textContent = ic;
+    btn.onclick = () => {
+      if (state.icons.includes(ic)) {
+        state.icons = state.icons.filter(i => i !== ic);
+        btn.classList.remove('selected');
+      } else {
+        state.icons.push(ic);
+        btn.classList.add('selected');
+      }
+      updatePreview();
+    };
+    el.appendChild(btn);
+  });
+}
+
+// Build tone grid
+function buildToneGrid() {
+  const el = document.getElementById('toneGrid');
+  el.innerHTML = '';
+  tones.forEach(t => {
+    const btn = document.createElement('div');
+    btn.className = 'tone-btn' + (state.tone === t.name ? ' selected' : '');
+    btn.innerHTML = `<div>${t.name}</div><div style="font-size:8px;opacity:0.6;margin-top:2px">${t.sub}</div>`;
+    btn.onclick = () => {
+      state.tone = t.name;
+      document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updatePreview();
+    };
+    el.appendChild(btn);
+  });
+}
+
+// Compute light version of primary
+function lighten(hex, amount = 0.85) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  const lr = Math.round(r + (255-r)*amount);
+  const lg = Math.round(g + (255-g)*amount);
+  const lb = Math.round(b + (255-b)*amount);
+  return `rgb(${lr},${lg},${lb})`;
+}
+
+function isLight(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return (r*0.299 + g*0.587 + b*0.114) > 128;
+}
+
+function updatePreview() {
+  const f = fonts[state.fontIdx];
+  const lightBg = lighten(state.primary);
+  const fgOnDark = isLight(state.primary) ? '#0A0A0A' : '#FDFCF9';
+  const fgOnLight = isLight(lightBg) ? '#0A0A0A' : '#FDFCF9';
+  const fgOnAccent = isLight(state.accent) ? '#0A0A0A' : '#FDFCF9';
+
+  // Card 1
+  const c1 = document.getElementById('previewCard1');
+  c1.style.background = state.primary;
+  c1.style.color = fgOnDark;
+  c1.style.fontFamily = `'${f.body}', sans-serif`;
+  document.getElementById('ph1').style.fontFamily = `'${f.display}', serif`;
+  document.getElementById('pcta1').style.background = state.accent;
+  document.getElementById('pcta1').style.color = fgOnAccent;
+
+  // Card 2
+  const c2 = document.getElementById('previewCard2');
+  c2.style.background = lightBg;
+  c2.style.color = fgOnLight;
+  c2.style.fontFamily = `'${f.body}', sans-serif`;
+  document.getElementById('ph2').style.color = state.accent;
+  document.getElementById('ph2b').style.fontFamily = `'${f.display}', serif`;
+  document.getElementById('pcta2').style.borderColor = state.primary;
+  document.getElementById('pcta2').style.color = fgOnLight;
+
+  // Mood swatches
+  document.getElementById('ms1').style.background = state.primary;
+  document.getElementById('ms1').querySelector('span').style.color = fgOnDark;
+  document.getElementById('ms2').style.background = state.accent;
+  document.getElementById('ms2').querySelector('span').style.color = fgOnAccent;
+  document.getElementById('ms3').style.background = lightBg;
+  document.getElementById('ms3').querySelector('span').style.color = fgOnLight;
+
+  // Feed grid
+  const cells = document.querySelectorAll('#feedPreview .feed-preview-cell');
+  const pattern = [
+    { bg: state.primary, fg: fgOnDark },
+    { bg: state.accent, fg: fgOnAccent },
+    { bg: lightBg, fg: fgOnLight },
+    { bg: lightBg, fg: fgOnLight },
+    { bg: state.primary, fg: fgOnDark },
+    { bg: lighten(state.primary, 0.7), fg: fgOnLight },
+    { bg: state.accent, fg: fgOnAccent },
+    { bg: lightBg, fg: fgOnLight },
+    { bg: state.primary, fg: fgOnDark },
+  ];
+  cells.forEach((cell, i) => {
+    cell.style.background = pattern[i].bg;
+    cell.style.color = pattern[i].fg;
+    cell.style.fontFamily = `'${f.body}', sans-serif`;
+  });
+}
+
+function exportMoodboard() {
+  const f = fonts[state.fontIdx];
+  const lightBg = lighten(state.primary);
+  const info = `DeployMIMS Content OS — Brand Palette Export\n\nPrimary: ${state.primary}\nAccent: ${state.accent}\nLight: ${lightBg}\nDisplay Font: ${f.display}\nBody Font: ${f.body}\nBrand Tone: ${state.tone}\nIcons selected: ${state.icons.join(' ') || 'None'}\n\nGenerated by Content OS™ — deploymims.com`;
+  const blob = new Blob([info], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'deploymims-brand-palette.txt';
+  a.click();
+}
+
+// Init
+buildColorGrid('colorGrid', colours, 'primary');
+buildColorGrid('accentGrid', accentColours, 'accent');
+buildFontList();
+buildIconGrid();
+buildToneGrid();
+updatePreview();
+
+// Filter buttons (decorative for now)
+document.querySelectorAll('.filter-btn')?.forEach(btn => {
+  btn?.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
